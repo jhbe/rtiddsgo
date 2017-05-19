@@ -25,8 +25,6 @@ to golang built-in types.
 
 # Usage
 
-The directory rtiddsgo/eb contains all generated code.
-
 All names of types and variables found in IDL files have a leading uppercase
 character in the golang representation to make them visible from outside the
 package. Most have uppercase characters starting every word.
