@@ -1,4 +1,4 @@
-//go:generate /home/johan/go/bin/goyacc -o parser.go -p "Idl" parser.y
+//go:generate $GOPATH/bin/goyacc -o parser.go -p "Idl" parser.y
 package parse
 
 import (

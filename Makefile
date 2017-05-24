@@ -13,7 +13,7 @@ parse/parser.go: $(filter-out parse/parser.go, $(wildcard parse/*.go)) parse/par
 	go generate parse/parse.go
 	rm parse/y.output
 
-goddsgen: main/goddsgen.go $(wildcard parse/*.go) $(wildcard generate/*.go) Makefile
+goddsgen: main/goddsgen.go $(wildcard parse/*.go) $(wildcard generate/*.go) parse/parser.go Makefile
 	go build main/goddsgen.go
 
 # ===========================================================================
@@ -22,11 +22,11 @@ goddsgen: main/goddsgen.go $(wildcard parse/*.go) $(wildcard generate/*.go) Make
 
 example/mymessage.c: example/mymessage.idl Makefile
 	rm -rf example/*.h example/*.c
-	/opt/rti_connext_dds-5.2.3/bin/rtiddsgen -create typefiles -d example -I example -language C example/mymessage.idl
+	$(NDDSHOME)/bin/rtiddsgen -create typefiles -d example -I example -language C example/mymessage.idl
 
 example/mymodule_mymessage.go example/mymodule_myerror.go: goddsgen example/mymessage.idl Makefile
 	rm -f  example/mymodule_*.go
-	./goddsgen example/mymessage.idl /opt/rti_connext_dds-5.2.3 ../example mymessage example example
+	./goddsgen example/mymessage.idl $(NDDSHOME) ../example mymessage example example
 	go fmt ./example
 
 # ===========================================================================
