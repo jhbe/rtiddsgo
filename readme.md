@@ -135,6 +135,19 @@ when building goddsgen. You forgot to:
 
 
 
+# To Do
+
+- Remove hardcoded path to the RTI installation in participant.go.
+  Seems we can't use $NDDSHOME in a cgo statement. Best option might be
+  to use github.com/rjeczalik/pkgconfig/cmd/pkg-config and get the
+  include path and linker paths in with a PKG_CONFIG variable.
+
+- Ensure there are no silent failures in parser.y
+
+- More structfile test cases.
+
+- Comment the callbacks package.
+
 
 # Internal Design
 
