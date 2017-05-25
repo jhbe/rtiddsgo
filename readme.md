@@ -123,6 +123,19 @@ goddsgen do not:
     sequence<string, 1+2> foo;   // Not OK.
 
 
+# Troubleshooting
+
+- Got
+
+    parse/parse.go:1: running "/home/jhbe/go/bin/goyacc": fork/exec /home/jhbe/go/bin/goyacc: no such file or directory
+
+when building goddsgen. You forgot to:
+
+    go get golang.org/x/tools/cmd/goyacc
+
+
+
+
 # Internal Design
 
 The three parts making up this package are:
