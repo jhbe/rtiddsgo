@@ -50,6 +50,6 @@ example: ./publisher ./subscriber
 # ===========================================================================
 
 clean:
-	rm -rf test/mymessage.go parseidl/parser.go parseidl/y.output test_go/*
+	rm -rf test/mymessage.go parseidl/parser.go parseidl/y.output test_go/* parse/parser.go
 	rm -rf example/mymodule_mymessage.go example/*.h example/*.c
 	rm -rf ./publisher ./subscriber ./goddsgen
