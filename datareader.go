@@ -2,7 +2,7 @@ package rtiddsgo
 
 import (
 	"errors"
-	"opendds/callbacks"
+	"rtiddsgo/callbacks"
 	"unsafe"
 )
 
