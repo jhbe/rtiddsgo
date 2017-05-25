@@ -12,6 +12,8 @@ import (
 //   int onDataAvailableIndex;
 // };
 //
+// void OnDataAvailable(int);
+//
 // void on_data_available(void* listener_data, DDS_DataReader* dataReader) {
 //   OnDataAvailable(((struct CallbackInfo *)listener_data)->onDataAvailableIndex);
 // }
