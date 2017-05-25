@@ -125,11 +125,13 @@ goddsgen do not:
 
 # Troubleshooting
 
-- Got
+### No goyacc
+
+If you got:
 
     parse/parse.go:1: running "/home/jhbe/go/bin/goyacc": fork/exec /home/jhbe/go/bin/goyacc: no such file or directory
 
-when building goddsgen. You forgot to:
+when building goddsgen, then you forgot to:
 
     go get golang.org/x/tools/cmd/goyacc
 
