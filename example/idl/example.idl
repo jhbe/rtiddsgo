@@ -1,0 +1,10 @@
+module com {
+module ex {
+
+struct A {
+  long   TheLong;
+  string TheString;
+};
+
+};
+};

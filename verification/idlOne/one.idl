@@ -1,0 +1,79 @@
+module com {
+module One {
+
+const long One_A = 3;
+const short One_B = 2;
+const string One_C = "Hello";
+
+enum One_D {First, Second};
+
+typedef One_D One_E;
+
+typedef boolean One_Bool;
+typedef long One_Long;
+typedef string One_String;
+
+typedef sequence<boolean   ,     2> One_F;
+typedef sequence<boolean   , One_B> One_G;
+typedef sequence<One_Bool  , One_B> One_H;
+
+typedef sequence<long      ,     2> One_I;
+typedef sequence<long      , One_B> One_J;
+typedef sequence<One_Long  , One_B> One_K;
+
+typedef sequence<string    ,     2> One_L;
+typedef sequence<string    , One_B> One_M;
+typedef sequence<One_String, One_B> One_N;
+
+typedef sequence<One_F, 3> One_O;
+typedef sequence<One_G, 3> One_P;
+typedef sequence<One_H, 3> One_Q;
+
+typedef sequence<One_I, 3> One_R;
+typedef sequence<One_J, 3> One_S;
+typedef sequence<One_K, 3> One_T;
+
+typedef sequence<One_L, 3> One_U;
+typedef sequence<One_M, 3> One_V;
+typedef sequence<One_N, 3> One_W;
+
+struct One_X {
+    boolean W_A;
+};
+
+union One_Y switch (One_D) {  // One_E doesn't work, but should.
+case First:
+    One_W X_A;
+case Second:
+    One_E X_B;
+};
+
+struct One_Z : One_X {
+	boolean        A;
+	short          B;
+	unsigned short C;
+	long           D;
+	unsigned long  E;
+	float          F;
+	double         G;
+	string         H;
+
+	sequence<boolean, 1    > I;
+   	sequence<short  , 2    > J;
+   	sequence<string , One_B> K;
+
+    One_O L;
+    One_P M;
+    One_Q N;
+
+/*    One_R O;
+    One_S P;
+    One_T Q;
+
+    One_U R;
+    One_V S;
+    One_W T;*/
+};
+
+};
+};

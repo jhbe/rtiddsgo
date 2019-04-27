@@ -1,55 +1,78 @@
 #!/bin/make -f
 
-# NDDS_QOS_PROFILE = example/my_qos.xml
+NDDSHOME=/home/johan/rti_connext_dds-5.3.1/
+RTILIBDIR=$(NDDSHOME)lib/x64Linux3gcc5.4.0
 
-all: example
+all: ./examplepub ./examplesub ./verificationpub ./verificationsub
 
-# ===========================================================================
-#  Build the parser tool.
-# ===========================================================================
+idl: example/src/example_constants.go example/src/example_constants.go verification/src/one_constants.go verification/src/two_constants.go
 
-parse/parser.go: $(filter-out parse/parser.go, $(wildcard parse/*.go)) parse/parser.y  Makefile
-    # Generate the parser.go file from the parser.y goyacc file.
-	go generate parse/parse.go
-	rm parse/y.output
-
-goddsgen: main/goddsgen.go $(wildcard parse/*.go) $(wildcard generate/*.go) parse/parser.go Makefile
+#
+# GoDdsGen
+#
+goddsgen: main/goddsgen.go generate/*.go parse/*.go
 	go build main/goddsgen.go
 
-# ===========================================================================
-#  Build the example pre-requisites.
-# ===========================================================================
+#
+# Example
+#
+example/src:
+	mkdir -p example/src
 
-example/mymessage.c: example/mymessage.idl Makefile
-	rm -rf example/*.h example/*.c
-	$(NDDSHOME)/bin/rtiddsgen -create typefiles -d example -I example -language C example/mymessage.idl
+example/src/example.xml: example/src example/idl/example.idl
+	rm -rf example/src/example.xml
+	$(NDDSHOME)/bin/rtiddsgen -d example/src -I exampleidl -convertToXml example/idl/example.idl
 
-example/mymodule_mymessage.go example/mymodule_myerror.go: goddsgen example/mymessage.idl Makefile
-	rm -f  example/mymodule_*.go
-	./goddsgen example/mymessage.idl $(NDDSHOME) ../example mymessage example example
-	go fmt ./example
+example/src/example.c: example/src example/idl/example.idl
+	rm -rf example/src/example.h example/src/example.c example/src/exampleSupport.* example/src/examplePlugin.*
+	$(NDDSHOME)/bin/rtiddsgen -d example/src -I example/idl -create typefiles  -language c example/idl/example.idl
 
-# ===========================================================================
-#  Build the example/publisher example.
-# ===========================================================================
+example/src/example_constants.go: goddsgen example/src/example.c example/src/example.xml
+	rm -rf example/src/*.go
+	./goddsgen example/src/example.xml $(NDDSHOME) $(RTILIBDIR) example/src example
 
-./publisher: example/mymodule_mymessage.go example/mymodule_myerror.go example/mymessage.c main/publisher.go Makefile
-	go build main/publisher.go
-	
-# ===========================================================================
-#  Build the example/subscriber example.
-# ===========================================================================
+./examplepub: example/src/example_constants.go example/src/example.c example/pub/examplepub.go
+	go build example/pub/examplepub.go
 
-./subscriber: example/mymodule_mymessage.go example/mymodule_myerror.go example/mymessage.c main/subscriber.go Makefile
-	go build main/subscriber.go
+./examplesub: example/src/example_constants.go example/src/example.c example/sub/examplesub.go
+	go build example/sub/examplesub.go
 
-# ===========================================================================
+#
+# Verification
+#
+verification/src:
+	mkdir -p verification/src
 
-example: ./publisher ./subscriber
-	
-# ===========================================================================
+verification/src/one.xml: verification/src verification/idlOne/one.idl
+	rm -rf verification/src/one.xml
+	$(NDDSHOME)/bin/rtiddsgen -d verification/src -I verification/idlOne -convertToXml verification/idlOne/one.idl
+
+verification/src/two.xml: verification/src verification/idlTwo/two.idl
+	rm -rf verification/src/two.xml
+	$(NDDSHOME)/bin/rtiddsgen -d verification/src -I verification/idlOne -I verification/idlTwo -convertToXml verification/idlTwo/two.idl
+
+verification/src/one.c: verification/src verification/idlOne/one.idl
+	rm -rf verification/src/one.h verification/src/one.c verification/src/oneSupport.* verification/src/onePlugin.*
+	$(NDDSHOME)/bin/rtiddsgen -d verification/src -I verification/idlOne -create typefiles  -language c verification/idlOne/one.idl
+
+verification/src/two.c: verification/src verification/idlTwo/two.idl
+	rm -rf verification/src/two.h verification/src/two.c verification/src/twoSupport.* verification/src/twoPlugin.*
+	$(NDDSHOME)/bin/rtiddsgen -d verification/src -I verification/idlOne -I verification/idlTwo -create typefiles  -language c verification/idlTwo/two.idl
+
+verification/src/one_constants.go: goddsgen verification/src/one.c verification/src/one.xml
+	rm -rf verification/src/one*.go
+	./goddsgen verification/src/one.xml $(NDDSHOME) $(RTILIBDIR) verification/src eb
+
+verification/src/two_constants.go: goddsgen verification/src/two.c verification/src/two.xml
+	rm -rf verification/src/two*.go
+	./goddsgen verification/src/two.xml $(NDDSHOME) $(RTILIBDIR) verification/src eb
+
+./verificationpub: verification/src/one_constants.go verification/src/one.c verification/src/two_constants.go verification/src/two.c verification/pub/verificationpub.go
+	go build verification/pub/verificationpub.go
+
+./verificationsub: verification/src/one_constants.go verification/src/one.c verification/src/two_constants.go verification/src/two.c verification/sub/verificationsub.go
+	go build verification/sub/verificationsub.go
 
 clean:
-	rm -rf test/mymessage.go parseidl/parser.go parseidl/y.output test_go/* parse/parser.go
-	rm -rf example/mymodule_mymessage.go example/*.h example/*.c
-	rm -rf ./publisher ./subscriber ./goddsgen
+	rm -rf example/src verification/src
+	rm -f ./examplepub ./examplesub ./verificationpub ./verificationsub ./goddsgen

@@ -1,0 +1,11 @@
+#include "one.idl"
+
+module com {
+module Two {
+
+struct X : com::One::One_Z {
+    com::One::One_W X_A;
+};
+
+};
+};

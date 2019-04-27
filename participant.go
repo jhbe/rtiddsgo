@@ -2,11 +2,12 @@ package rtiddsgo
 
 import (
 	"errors"
+	"fmt"
 	"unsafe"
 )
 
-// #cgo CFLAGS: -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT -m64 -I/usr/dds/rti_connext_dds-5.2.3/include -I/usr/dds/rti_connext_dds-5.2.3/include/ndds -I/usr/include/x86_64-linux-gnu
-// #cgo LDFLAGS: -L/usr/dds/rti_connext_dds-5.2.3/lib/x64Linux3gcc4.8.2 -lnddsczd -lnddscorezd -ldl -lnsl -lm -lpthread -lrt -m64 -Wl,--no-as-needed
+// #cgo CFLAGS: -DRTI_UNIX -m64 -I/home/johan/rti_connext_dds-5.3.1/include -I/home/johan/rti_connext_dds-5.3.1/include/ndds -I/usr/include/x86_64-linux-gnu
+// #cgo LDFLAGS: -L/home/johan/rti_connext_dds-5.3.1/lib/x64Linux3gcc5.4.0 -lnddscz -lnddscorez -ldl -lnsl -lm -lpthread -lrt -Wl,--no-as-needed
 // #include <ndds/ndds_c.h>
 import "C"
 
@@ -15,7 +16,7 @@ type Participant struct {
 }
 
 // New returns a new participant on "domain" with "qosProfileName" from
-// "qosLibraryName". Default QoS is used in "qosLibraryName" is an empty string.
+// "qosLibraryName". Default QoS is used if "qosLibraryName" is an empty string.
 // Invoke p.Free() when done with the participant.
 func New(domain int, qosLibraryName, qosProfileName string) (Participant, error) {
 	p := Participant{}
@@ -36,7 +37,7 @@ func New(domain int, qosLibraryName, qosProfileName string) (Participant, error)
 			C.DDS_STATUS_MASK_NONE)
 	}
 	if p.p == nil {
-		return p, errors.New("Failed to create a participant")
+		return p, errors.New(fmt.Sprintf("Failed to create a participant on domain %d", domain))
 	}
 	return p, nil
 }
@@ -48,6 +49,7 @@ func (p Participant) Free() {
 	p.p = nil
 }
 
+// Get returns a pointer to the C domain participant. Internal use only!
 func (p Participant) Get() *C.DDS_DomainParticipant {
 	return p.p
 }
@@ -55,7 +57,7 @@ func (p Participant) Get() *C.DDS_DomainParticipant {
 // GetUnsafe returns a pointer to the participant as an unsafe pointer.
 // C types cannot be used in other packages, so Get() won't work outside
 // rtiddsgo, in particular in whatever package the generated type code
-// reside.
+// reside. Internal use only!
 func (p Participant) GetUnsafe() unsafe.Pointer {
 	return unsafe.Pointer(p.Get())
 }

@@ -46,7 +46,7 @@ func (dw DataWriter) Free() {
 
 // GetUnsafe returns a pointer to the data writer as an unsafe pointer.
 // C types cannot be used in other packages, so directly referencing
-// DataWriter.DW won't work outside rtiddsgo, in particular in whatever
+// DataWriter.DW won't work outside godds, in particular in whatever
 // package the generated type code reside.
 func (dw DataWriter) GetUnsafe() unsafe.Pointer {
 	return unsafe.Pointer(dw.DW)

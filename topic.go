@@ -10,12 +10,15 @@ import (
 import "C"
 
 type Topic struct {
-	t *C.DDS_Topic
-	p Participant
+	t              *C.DDS_Topic
+	p              Participant
 	name, typeName *C.char
 }
 
-func (p Participant)CreateTopic(name, typeName string, qosLibraryName, qosProfileName string) (Topic, error)  {
+// CreateTopic returns a new topic with "qosProfileName" from
+// "qosLibraryName". Default QoS is used in "qosLibraryName" if an empty string.
+// Invoke p.Free() when done with the topic.
+func (p Participant) CreateTopic(name, typeName string, qosLibraryName, qosProfileName string) (Topic, error) {
 	t := Topic{p: p, name: C.CString(name), typeName: C.CString(typeName)}
 	if len(qosLibraryName) == 0 {
 		t.t = C.DDS_DomainParticipant_create_topic(
@@ -41,7 +44,7 @@ func (p Participant)CreateTopic(name, typeName string, qosLibraryName, qosProfil
 	return t, nil
 }
 
-func (t Topic)Free() {
+func (t Topic) Free() {
 	C.DDS_DomainParticipant_delete_topic(t.p.p, t.t)
 	t.t = nil
 
@@ -49,7 +52,7 @@ func (t Topic)Free() {
 	C.free(unsafe.Pointer(t.typeName))
 }
 
-func (t Topic)description() *C.DDS_TopicDescription {
+func (t Topic) description() *C.DDS_TopicDescription {
 	if t.t == nil {
 		return nil
 	}

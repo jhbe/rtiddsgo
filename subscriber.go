@@ -9,10 +9,13 @@ import "C"
 
 type Subscriber struct {
 	sub *C.DDS_Subscriber
-	p Participant
+	p   Participant
 }
 
-func (p Participant)CreateSubscriber(qosLibraryName, qosProfileName string) (Subscriber, error) {
+// CreateSubscriber returns a new subscriber with "qosProfileName" from
+// "qosLibraryName". Default QoS is used if "qosLibraryName" is an empty string.
+// Invoke p.Free() when done with the subscriber.
+func (p Participant) CreateSubscriber(qosLibraryName, qosProfileName string) (Subscriber, error) {
 	sub := Subscriber{p: p}
 	if len(qosLibraryName) == 0 {
 		sub.sub = C.DDS_DomainParticipant_create_subscriber(
@@ -34,7 +37,7 @@ func (p Participant)CreateSubscriber(qosLibraryName, qosProfileName string) (Sub
 	return sub, nil
 }
 
-func (sub Subscriber)Free() {
+func (sub Subscriber) Free() {
 	C.DDS_DomainParticipant_delete_subscriber(sub.p.p, sub.sub)
 	sub.sub = nil
 }

@@ -9,10 +9,13 @@ import "C"
 
 type Publisher struct {
 	pub *C.DDS_Publisher
-	p Participant
+	p   Participant
 }
 
-func (p Participant)CreatePublisher(qosLibraryName, qosProfileName string) (Publisher, error) {
+// CreatePublisher returns a new publisher with "qosProfileName" from
+// "qosLibraryName". Default QoS is used if "qosLibraryName" is an empty string.
+// Invoke p.Free() when done with the publisher.
+func (p Participant) CreatePublisher(qosLibraryName, qosProfileName string) (Publisher, error) {
 	pub := Publisher{p: p}
 	if len(qosLibraryName) == 0 {
 		pub.pub = C.DDS_DomainParticipant_create_publisher(
@@ -34,7 +37,7 @@ func (p Participant)CreatePublisher(qosLibraryName, qosProfileName string) (Publ
 	return pub, nil
 }
 
-func (pub Publisher)Free() {
+func (pub Publisher) Free() {
 	C.DDS_DomainParticipant_delete_publisher(pub.p.p, pub.pub)
 	pub.pub = nil
 }
