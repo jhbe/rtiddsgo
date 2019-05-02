@@ -92,31 +92,33 @@ func main() {
 			log.Fatal(err)
 		}
 
-		dwFile, err := os.Create(fileName + "_datawriter.go")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer structFile.Close()
-		if err = generate.DataWriterFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, dwFile); err != nil {
-			log.Fatal(err)
-		}
+		if !sd.Nested {
+			dwFile, err := os.Create(fileName + "_datawriter.go")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer structFile.Close()
+			if err = generate.DataWriterFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, dwFile); err != nil {
+				log.Fatal(err)
+			}
 
-		drFile, err := os.Create(fileName + "_datareader.go")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer structFile.Close()
-		if err = generate.DataReaderFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, drFile); err != nil {
-			log.Fatal(err)
-		}
+			drFile, err := os.Create(fileName + "_datareader.go")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer structFile.Close()
+			if err = generate.DataReaderFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, drFile); err != nil {
+				log.Fatal(err)
+			}
 
-		allInOneFile, err := os.Create(fileName + "_allinone.go")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer structFile.Close()
-		if err = generate.AllInOneFile(sd, packageName, allInOneFile); err != nil {
-			log.Fatal(err)
+			allInOneFile, err := os.Create(fileName + "_allinone.go")
+			if err != nil {
+				log.Fatal(err)
+			}
+			defer structFile.Close()
+			if err = generate.AllInOneFile(sd, packageName, allInOneFile); err != nil {
+				log.Fatal(err)
+			}
 		}
 	}
 

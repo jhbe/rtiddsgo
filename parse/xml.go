@@ -97,6 +97,7 @@ type StructDecl struct {
 	BaseType      string       `xml:"baseType,attr"`
 	Members       []MemberDecl `xml:"member"`
 	TopLevel      string       `xml:"topLevel,attr"`
+	Nested        string       `xml:"nested,attr"`
 	Extensibility string       `xml:"extensibility,attr"`
 	ResolveName   string       `xml:"resolveName,attr"`
 }
@@ -159,6 +160,7 @@ type UnionDecl struct {
 	CaseDecls     []CaseDecl    `xml:"case"`
 	Name          string        `xml:"name,attr"`
 	TopLevel      string        `xml:"topLevel,attr"`
+	Nested        string        `xml:"nested,attr"`
 	Extensibility string        `xml:"extensibility,attr"`
 	ResolveName   string        `xml:"resolveName,attr"`
 }

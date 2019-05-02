@@ -39,14 +39,14 @@ typedef sequence<One_N, 3> One_W;
 
 struct One_X {
     boolean W_A;
-};
+}; //@top-level false
 
 union One_Y switch (One_D) {  // One_E doesn't work, but should.
 case First:
     One_W X_A;
 case Second:
     One_E X_B;
-};
+}; //@top-level false
 
 struct One_Z : One_X {
 	boolean        A;

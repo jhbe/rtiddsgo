@@ -40,8 +40,8 @@ var structsFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
 package {{.PackageName}}
 
 import (
-	"errors"
-	"rtiddsgo"
+{{if not .Nested}}	"errors"{{end}}
+{{if not .Nested}}	"rtiddsgo"{{end}}
 {{if .Unsafe}}    "unsafe"
 {{end}})
 
@@ -108,7 +108,7 @@ func (to *{{.GoName}}) Retrieve(from C.{{.CName}}) {
 func (to *{{.GoName}}) PostRetrieve(from C.{{.CName}}) {
 
 }
-
+{{if not .Nested}}
 //=====================================================================
 // Type Support
 //=====================================================================
@@ -140,4 +140,5 @@ func (in {{.GoName}}) StoreAndRetrieve() {{.GoName}} {
 
 	return unpacked
 }
+{{end}}
 `

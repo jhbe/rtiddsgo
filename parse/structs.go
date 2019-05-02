@@ -2,18 +2,19 @@ package parse
 
 // StructDef represents a struct.
 type StructDef struct {
-	GoName               string // Fully qualified go name ("Module1_Module2_Name") of the struct.
-	CName                string // Fully qualified C/DDS name of struct ("module1_module2_name"). Casing is unchanged.
-	BaseType             string
-	Members              []StructMember
+	GoName   string // Fully qualified go name ("Module1_Module2_Name") of the struct.
+	CName    string // Fully qualified C/DDS name of struct ("module1_module2_name"). Casing is unchanged.
+	BaseType string
+	Nested   bool
+	Members  []StructMember
 }
 
 type StructMember struct {
-	GoName               string // Name of the member.
-	CName                string // Name of the member as defined in C.
-	GoType               string
-	CType                string
-	SeqLen               string
+	GoName string // Name of the member.
+	CName  string // Name of the member as defined in C.
+	GoType string
+	CType  string
+	SeqLen string
 }
 
 // GetStructsDef traverses the result of the parsing of the XML file ("me")
@@ -26,6 +27,7 @@ func (me ModuleElements) GetStructsDef() []StructDef {
 			GoName:   goNameOf(goPath, s.Name),
 			CName:    cNameOf(cPath, s.Name),
 			BaseType: goTypeOf("nonBasic", s.BaseType),
+			Nested:   s.Nested == "true",
 		}
 
 		for _, m := range s.Members {

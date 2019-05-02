@@ -3,6 +3,7 @@ package parse
 type UnionDef struct {
 	GoName             string // Fully qualified go name ("Module1_Module2_Name") of the union.
 	CName              string // Fully qualified C/DDS name of the union ("module1_module2_name"). Casing is unchanged.
+	Nested             bool
 	Members            []UnionMember
 	GoDiscriminantType string
 	CDiscriminantType  string
@@ -24,17 +25,18 @@ func (me ModuleElements) GetUnionsDef() []UnionDef {
 		unionDef := UnionDef{
 			GoName:             goNameOf(goPath, u.Name),
 			CName:              cNameOf(cPath, u.Name),
+			Nested: u.Nested == "true",
 			GoDiscriminantType: goTypeOf(u.Discriminator.Type, u.Discriminator.NonBasicTypeName),
 			CDiscriminantType:  ddsTypeOf(u.Discriminator.Type, u.Discriminator.NonBasicTypeName),
 		}
 
 		for _, cd := range u.CaseDecls {
 			member := UnionMember{
-				GoName: goNameOf("", cd.Member.Name),
-				CName:  cNameOf("", cd.Member.Name),
-				GoType: goTypeOf(cd.Member.Type, cd.Member.NonBasicTypeName),
-				CType:  ddsTypeOf(cd.Member.Type, cd.Member.NonBasicTypeName),
-				SeqLen: cSeqLenOf(cd.Member.SequenceMaxLength),
+				GoName:               goNameOf("", cd.Member.Name),
+				CName:                cNameOf("", cd.Member.Name),
+				GoType:               goTypeOf(cd.Member.Type, cd.Member.NonBasicTypeName),
+				CType:                ddsTypeOf(cd.Member.Type, cd.Member.NonBasicTypeName),
+				SeqLen:               cSeqLenOf(cd.Member.SequenceMaxLength),
 				GoDiscriminatorValue: goNameOf("", cd.CaseDiscriminator.Value),
 			}
 			unionDef.Members = append(unionDef.Members, member)

@@ -40,8 +40,8 @@ var unionFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
 package {{.PackageName}}
 
 import (
-	"errors"
-	"rtiddsgo"
+{{if not .Nested}}	"errors"{{end}}
+{{if not .Nested}}	"rtiddsgo"{{end}}
 {{if .Unsafe}}    "unsafe"
 {{end}})
 
@@ -115,7 +115,7 @@ func (to *{{.GoName}}) Retrieve(from C.{{.CName}}) {
 func (to *{{.GoName}}) PostRetrieve(from C.{{.CName}}) {
 
 }
-
+{{if not .Nested}} 
 //=====================================================================
 // Type Support
 //=====================================================================
@@ -133,84 +133,5 @@ func {{.GoName}}_RegisterType(p rtiddsgo.Participant) error {
 	}
 	return nil
 }
-`
-
-/*
-var structsFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-import (
-	"errors"
-	"rtiddsgo"
-{{if .Unsafe}}    "unsafe"
-{{end}})
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-import "C"
-
-//=====================================================================
-// Go type definition of the IDL type
-//=====================================================================
-
-type {{.GoName}} struct {
-{{if .IsAUnion}}  _Discriminant {{.DiscriminantMember.GoType}}{{end}}
-{{- range $member := .Members}}
-  {{.GoName}} {{.Array}}{{.GoType}}{{if $.IsAUnion}} // For case {{.GoDiscriminatorValue}}{{end}}{{end}}
-}
-
-//=====================================================================
-// Functions for copying data from the Go type to the C type
-//=====================================================================
-
-func (from {{.GoName}}) Store(to *C.{{.CType}}) {
-{{if $.IsAUnion}}    {{.DiscriminantMember.Store}}
-    switch from._Discriminant { {{end}}
-{{- range $member := .Members}}
-    {{if $.IsAUnion}}case {{.GoDiscriminatorValue}}: {{end}}{{.Store}}
 {{end}}
-{{if $.IsAUnion}}    } {{end}}
-}
-
-func (from {{.GoName}}) PostStore(to *C.{{.CType}}) {
-}
-
-//=====================================================================
-// Functions for copying data from the C type to the Go type
-//=====================================================================
-
-func (to *{{.GoName}}) Retrieve(from *C.{{.CType}}) {
-{{if $.IsAUnion}}    {{.DiscriminantMember.Retrieve}}
-    switch to._Discriminant { {{end}}
-{{- range $member := .Members}}
-    {{if $.IsAUnion}}case {{.GoDiscriminatorValue}}: {{end}}{{.Retrieve}}{{end}}
-{{if $.IsAUnion}}    } {{end}}
-}
-
-func (to *{{.GoName}}) PostRetrieve(from *C.{{.CType}}) {
-
-}
-
-//=====================================================================
-// Type Support
-//=====================================================================
-
-func {{.GoName}}_GetTypeName() string {
-  return C.GoString(C.{{.CType}}TypeSupport_get_type_name())
-}
-
-func {{.GoName}}_RegisterType(p rtiddsgo.Participant) error {
-	rc := C.{{.CType}}TypeSupport_register_type(
-		(*C.DDS_DomainParticipant)(p.GetUnsafe()),
-		C.{{.CType}}TypeSupport_get_type_name())
-	if rc != C.DDS_RETCODE_OK {
-		return errors.New("Failed to register the type {{.GoName}}.")
-	}
-	return nil
-}
 `
-*/
