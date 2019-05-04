@@ -16,7 +16,7 @@ func UnionFile(ud parse.UnionDef, packageName, rtiInstallDir, rtiLibDir, cFileNa
 		CFileName     string
 		Unsafe        bool
 	}{
-		UnionDef:     ud,
+		UnionDef:      ud,
 		PackageName:   packageName,
 		RtiInstallDir: rtiInstallDir,
 		RtiLibDir:     rtiLibDir,
@@ -30,6 +30,7 @@ func UnionFile(ud parse.UnionDef, packageName, rtiInstallDir, rtiLibDir, cFileNa
 	}
 
 	return template.Must(template.New("unionFileTmpl").Funcs(template.FuncMap{
+		"Type":     Type,
 		"Store":    Store,
 		"Retrieve": Retrieve,
 	}).Parse(unionFileTmpl)).Execute(w, ts)
@@ -59,7 +60,7 @@ import "C"
 type {{.GoName}} struct {
   _Discriminant {{.GoDiscriminantType}}
 {{- range $member := .Members}}
-  {{.GoName}} {{if .SeqLen}}[]{{end}}{{.GoType}} // For case {{.GoDiscriminatorValue}}{{end}}
+  {{.GoName}} {{Type .GoType .SeqLen .ArrayDims}} // For case {{.GoDiscriminatorValue}}{{end}}
 }
 
 //=====================================================================
@@ -67,21 +68,12 @@ type {{.GoName}} struct {
 //=====================================================================
 
 func (from {{.GoName}}) Store(to *C.{{.CName}}) {
-    {{Store .GoDiscriminantType .CDiscriminantType "from._Discriminant" "(*to)._d" "&(to._d)"}}
+    {{Store .GoDiscriminantType .CDiscriminantType "from._Discriminant" "(*to)._d" "&(to._d)" "" ""}}
 
     switch from._Discriminant {
 {{- range $member := .Members}}
     case {{.GoDiscriminatorValue}}:
-{{- if .SeqLen}}
-        C.{{.CType}}Seq_set_maximum(&to._u.{{.CName}}, C.DDS_Long({{.SeqLen}}))
-        C.{{.CType}}Seq_set_length(&to._u.{{.CName}}, C.DDS_Long(len(from.{{.GoName}})))
-        for index, _ := range from.{{.GoName}} {
-            value := C.{{.CType}}Seq_get_reference(&to._u.{{.CName}}, C.DDS_Long(index))
-            {{Store .GoType .CType (printf "from.%s[index]" .GoName) "*value" "value"}}
-        }
-{{- else}}
-        {{Store .GoType .CType (printf "from.%s" .GoName) (printf "(*to)._u.%s" .CName) (printf "&(to._u.%s)" .CName)}}
-{{- end -}}
+        {{Store .GoType .CType (printf "from.%s" .GoName) (printf "(*to)._u.%s" .CName) (printf "&(to._u.%s)" .CName) .SeqLen .ArrayDims}}
 {{end}}
     }
 }
@@ -94,26 +86,14 @@ func (from {{.GoName}}) PostStore(to *C.{{.CName}}) {
 //=====================================================================
 
 func (to *{{.GoName}}) Retrieve(from C.{{.CName}}) {
-	{{Retrieve .GoDiscriminantType .CDiscriminantType "(*to)._Discriminant" "from._d" false}}
+	{{Retrieve .GoDiscriminantType .CDiscriminantType "" "(*to)._Discriminant" "from._d" "" "" false}}
 
     switch to._Discriminant {
 {{- range $member := .Members}}
     case {{.GoDiscriminatorValue}}:
-{{- if .SeqLen}}
-	    (*to).{{.CName}} = make([]{{.GoType}}, C.{{.CType}}Seq_get_length(&from._u.{{.GoName}}))
-	    for index, _ := range (*to).{{.GoName}} {
-            value := C.{{.CType}}Seq_get(&from._u.{{.GoName}}, C.DDS_Long(index))
-            {{Retrieve .GoName .GoType (printf "(*to).%s[index]" .GoName) "value" false}}
-        }
-{{- else}}
-	    {{Retrieve .GoName .GoType (printf "(*to).%s" .CName) (printf "from._u.%s" .GoName) false}}
-{{- end -}}
+	    {{Retrieve .GoName .GoType .CType (printf "to.%s" .CName) (printf "from._u.%s" .GoName) .SeqLen .ArrayDims false}}
 {{end}}
     }
-}
-
-func (to *{{.GoName}}) PostRetrieve(from C.{{.CName}}) {
-
 }
 {{if not .Nested}} 
 //=====================================================================

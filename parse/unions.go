@@ -15,6 +15,7 @@ type UnionMember struct {
 	GoType               string
 	CType                string
 	SeqLen               string
+	ArrayDims            string
 	GoDiscriminatorValue string // Fully qualified go value of the discriminator for this member.
 }
 
@@ -25,7 +26,7 @@ func (me ModuleElements) GetUnionsDef() []UnionDef {
 		unionDef := UnionDef{
 			GoName:             goNameOf(goPath, u.Name),
 			CName:              cNameOf(cPath, u.Name),
-			Nested: u.Nested == "true",
+			Nested:             u.Nested == "true",
 			GoDiscriminantType: goTypeOf(u.Discriminator.Type, u.Discriminator.NonBasicTypeName),
 			CDiscriminantType:  ddsTypeOf(u.Discriminator.Type, u.Discriminator.NonBasicTypeName),
 		}
@@ -37,6 +38,7 @@ func (me ModuleElements) GetUnionsDef() []UnionDef {
 				GoType:               goTypeOf(cd.Member.Type, cd.Member.NonBasicTypeName),
 				CType:                ddsTypeOf(cd.Member.Type, cd.Member.NonBasicTypeName),
 				SeqLen:               cSeqLenOf(cd.Member.SequenceMaxLength),
+				ArrayDims:            goArrayDimsOf(cd.Member.ArrayDimensions),
 				GoDiscriminatorValue: goNameOf("", cd.CaseDiscriminator.Value),
 			}
 			unionDef.Members = append(unionDef.Members, member)

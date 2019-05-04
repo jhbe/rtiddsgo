@@ -37,6 +37,10 @@ typedef sequence<One_L, 3> One_U;
 typedef sequence<One_M, 3> One_V;
 typedef sequence<One_N, 3> One_W;
 
+typedef boolean One_Array[One_A];
+typedef One_Array One_Array_B[2];
+typedef sequence<boolean, 3> One_Array_C[2];
+
 struct One_X {
     boolean W_A;
 }; //@top-level false
@@ -54,9 +58,24 @@ struct One_Z : One_X {
 	unsigned short C;
 	long           D;
 	unsigned long  E;
+	long long           D_64;
+	unsigned long long  E_64;
 	float          F;
 	double         G;
 	string         H;
+
+	boolean A_aa[2];
+	short A_a2[2];
+	string A_a3[2];
+	One_X A_a4[2];
+
+	boolean A_b[One_A];
+	One_Array A_c;
+	sequence<One_Array, 3> A_d;
+	One_Array_B A_e;
+	One_Array_C A_f;
+	sequence<boolean, 3> A_g[4];
+
 
 	sequence<boolean, 1    > I;
    	sequence<short  , 2    > J;

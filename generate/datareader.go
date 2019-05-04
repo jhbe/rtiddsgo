@@ -96,7 +96,6 @@ func (dr *{{.GoName}}DataReader) DataAvailable() error {
 
 					goData.Retrieve(rxData)
 					dr.rx(true, goData)
-					goData.PostRetrieve(rxData)
 				}
 			}
 		}

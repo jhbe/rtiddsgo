@@ -79,6 +79,10 @@ func goPathTypeOf(goPath, xmlType, nonBasic string) string {
 		return "int32"
 	case "uint32":
 		return "uint32"
+	case "int64":
+		return "int64"
+	case "uint64":
+		return "uint64"
 	case "float32":
 		return "float32"
 	case "float64":
@@ -106,6 +110,10 @@ func ddsTypeOf(xmlType, nonBasic string) string {
 		return "DDS_Long"
 	case "uint32":
 		return "DDS_UnsignedLong"
+	case "int64":
+		return "DDS_LongLong"
+	case "uint64":
+		return "DDS_UnsignedLongLong"
 	case "float32":
 		return "DDS_Float"
 	case "float64":
@@ -129,4 +137,16 @@ func cSeqLenOf(seqLen string) string {
 		return "C." + cNameOf("", seqLen)
 	}
 	return seqLen
+}
+
+func goArrayDimsOf(arrayDims string) string {
+	if strings.Contains(arrayDims, ",") {
+		panic("Multi dimensional arrays are not yet supported")
+	}
+	arrayDims = strings.TrimLeft(arrayDims, "(")
+	arrayDims = strings.TrimRight(arrayDims, ")")
+	if strings.Contains(arrayDims, "::") {
+		return goNameOf("", arrayDims)
+	}
+	return arrayDims
 }

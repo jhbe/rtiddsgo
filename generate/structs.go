@@ -30,6 +30,7 @@ func StructFile(sd parse.StructDef, packageName, rtiInstallDir, rtiLibDir, cFile
 	}
 
 	return template.Must(template.New("structsFileTmpl").Funcs(template.FuncMap{
+		"Type":     Type,
 		"Store":    Store,
 		"Retrieve": Retrieve,
 	}).Parse(structsFileTmpl)).Execute(w, ts)
@@ -60,7 +61,7 @@ import "C"
 type {{.GoName}} struct {
   {{if .BaseType}}{{.BaseType}}{{end}}
 {{- range $member := .Members}}
-  {{.GoName}} {{if .SeqLen}}[]{{end}}{{.GoType}}{{end}}
+  {{.GoName}} {{Type .GoType .SeqLen .ArrayDims}}{{end}}
 }
 
 //=====================================================================
@@ -70,20 +71,8 @@ type {{.GoName}} struct {
 func (from {{.GoName}}) Store(to *C.{{.CName}}) {
 {{if .BaseType}}    from.{{.BaseType}}.Store(&to.parent){{end}}
 {{- range $member := .Members}}
-{{- if .SeqLen}}
-    C.{{.CType}}Seq_set_maximum(&to.{{.CName}}, C.DDS_Long({{.SeqLen}}))
-	C.{{.CType}}Seq_set_length(&to.{{.CName}}, C.DDS_Long(len(from.{{.GoName}})))
-	for index, _ := range from.{{.GoName}} {
-		value := C.{{.CType}}Seq_get_reference(&to.{{.CName}}, C.DDS_Long(index))
-		{{Store .GoType .CType (printf "from.%s[index]" .GoName) "*value" "value"}}
-	}
-{{- else}}
-    {{Store .GoType .CType (printf "from.%s" .GoName) (printf "(*to).%s" .CName) (printf "&(to.%s)" .CName)}}
-{{- end -}}
+    {{Store .GoType .CType (printf "from.%s" .GoName) (printf "(*to).%s" .CName) (printf "&(to.%s)" .CName) .SeqLen .ArrayDims}}
 {{end}}
-}
-
-func (from {{.GoName}}) PostStore(to *C.{{.CName}}) {
 }
 
 //=====================================================================
@@ -93,20 +82,8 @@ func (from {{.GoName}}) PostStore(to *C.{{.CName}}) {
 func (to *{{.GoName}}) Retrieve(from C.{{.CName}}) {
 {{if .BaseType}}    to.{{.BaseType}}.Retrieve(from.parent){{end}}
 {{- range $member := .Members}}
-{{- if .SeqLen}}
-	(*to).{{.CName}} = make([]{{.GoType}}, C.{{.CType}}Seq_get_length(&from.{{.GoName}}))
-	for index, _ := range (*to).{{.GoName}} {
-		value := C.{{.CType}}Seq_get(&from.{{.GoName}}, C.DDS_Long(index))
-		{{Retrieve .GoName .GoType (printf "(*to).%s[index]" .GoName) "value" false}}
-	}
-{{- else}}
-	{{Retrieve .GoName .GoType (printf "(*to).%s" .CName) (printf "from.%s" .GoName) false}}
-{{- end -}}
+	{{Retrieve .GoName .GoType .CType (printf "to.%s" .GoName) (printf "from.%s" .CName) .SeqLen .ArrayDims false}}
 {{end}}
-}
-
-func (to *{{.GoName}}) PostRetrieve(from C.{{.CName}}) {
-
 }
 {{if not .Nested}}
 //=====================================================================

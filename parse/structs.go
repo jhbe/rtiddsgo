@@ -10,11 +10,12 @@ type StructDef struct {
 }
 
 type StructMember struct {
-	GoName string // Name of the member.
-	CName  string // Name of the member as defined in C.
-	GoType string
-	CType  string
-	SeqLen string
+	GoName   string // Name of the member.
+	CName    string // Name of the member as defined in C.
+	GoType   string
+	CType    string
+	SeqLen   string
+	ArrayDims string
 }
 
 // GetStructsDef traverses the result of the parsing of the XML file ("me")
@@ -37,6 +38,7 @@ func (me ModuleElements) GetStructsDef() []StructDef {
 				GoType: goTypeOf(m.Type, m.NonBasicTypeName),
 				CType:  ddsTypeOf(m.Type, m.NonBasicTypeName),
 				SeqLen: cSeqLenOf(m.SequenceMaxLength),
+				ArrayDims: goArrayDimsOf(m.ArrayDimensions),
 			}
 			structDef.Members = append(structDef.Members, member)
 		}

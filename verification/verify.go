@@ -16,6 +16,8 @@ var ComTwoX = eb.Com_Two_X{
 		C: 1,
 		D: -2,
 		E: 2,
+		D_64: -64,
+		E_64: 64,
 		F: -3.0,
 		G: -4.0,
 		I: []bool{true},

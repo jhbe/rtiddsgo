@@ -55,7 +55,7 @@ func main() {
 	}
 	defer constsFile.Close()
 
-	if generate.ConstsFile(t.ModuleElements.GetConstsDef(), packageName, constsFile) != nil {
+	if err := generate.ConstsFile(t.ModuleElements.GetConstsDef(), packageName, constsFile); err != nil {
 		log.Fatal(err)
 	}
 
@@ -65,7 +65,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer enumsFile.Close()
-	if generate.EnumsFile(t.ModuleElements.GetEnumsDef(), packageName, rtiInstallDir, rtiLibDir, cFileName, enumsFile) != nil {
+	if err := generate.EnumsFile(t.ModuleElements.GetEnumsDef(), packageName, rtiInstallDir, rtiLibDir, cFileName, enumsFile); err != nil {
 		log.Fatal(err)
 	}
 
@@ -75,7 +75,7 @@ func main() {
 		log.Fatal(err)
 	}
 	defer typeDefsFile.Close()
-	if generate.TypeDefsFile(t.ModuleElements.GetTypeDefs(), packageName, rtiInstallDir, rtiLibDir, cFileName, typeDefsFile) != nil {
+	if err := generate.TypeDefsFile(t.ModuleElements.GetTypeDefs(), packageName, rtiInstallDir, rtiLibDir, cFileName, typeDefsFile); err != nil {
 		log.Fatal(err)
 	}
 

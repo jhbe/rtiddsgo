@@ -70,7 +70,6 @@ func (dw {{.GoName}}DataWriter) Write(m {{.GoName}}) error {
 		instance,
 		&C.DDS_HANDLE_NIL)
 	defer func() {
-		m.PostStore(instance)
 		C.{{.CName}}TypeSupport_delete_data(instance)
 	}()
 	if rc != C.DDS_RETCODE_OK {
