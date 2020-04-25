@@ -7,5 +7,13 @@ struct X : com::One::One_Z {
     com::One::One_W X_A;
 };
 
+union Y switch (com::One::One_D) {
+    case com::One::First:
+        boolean theFirst;
+
+    case com::One::Second:
+        boolean theSecond;
+};
+
 };
 };

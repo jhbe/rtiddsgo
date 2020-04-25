@@ -29,10 +29,10 @@ func goNameOf(path, name string) string {
 }
 
 // Returns the string with each word set in the Title case. Words are separated by a double-colon or underscore.
-// The string must not contain spaces.
+// The string is returned unchanged if it contains spaces.
 func toTitle(s string) string {
 	if strings.Contains(s, " ") {
-		panic("The string must not contain spaces.")
+		return s
 	}
 
 	// Convert all double colons to spaces, Title the whole string then convert the spaces back to double-colons.

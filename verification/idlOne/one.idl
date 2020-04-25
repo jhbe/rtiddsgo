@@ -4,6 +4,7 @@ module One {
 const long One_A = 3;
 const short One_B = 2;
 const string One_C = "Hello";
+const string One_C_With_Space = "hello ";
 
 enum One_D {First, Second};
 

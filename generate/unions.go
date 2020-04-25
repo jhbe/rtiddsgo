@@ -91,7 +91,7 @@ func (to *{{.GoName}}) Retrieve(from C.{{.CName}}) {
     switch to._Discriminant {
 {{- range $member := .Members}}
     case {{.GoDiscriminatorValue}}:
-	    {{Retrieve .GoName .GoType .CType (printf "to.%s" .CName) (printf "from._u.%s" .GoName) .SeqLen .ArrayDims false}}
+	    {{Retrieve .GoName .GoType .CType (printf "to.%s" .GoName) (printf "from._u.%s" .CName) .SeqLen .ArrayDims false}}
 {{end}}
     }
 }
