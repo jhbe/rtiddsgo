@@ -48,90 +48,71 @@ func main() {
 	}
 	//t.Dump(os.Stdout, 0)
 
-	// Create the consts file. A single file holds all constants.
-	constsFile, err := os.Create(outPathName + "/" + name + "_constants.go")
+	// Create the output file. To keep the number of files down we stick all golang code in a single file.
+	goFile, err := os.Create(outPathName + "/" + name + ".go")
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer constsFile.Close()
+	defer goFile.Close()
 
-	if err := generate.ConstsFile(t.ModuleElements.GetConstsDef(), packageName, constsFile); err != nil {
-		log.Fatal(err)
+	unsafe := false
+	for _, sd := range t.ModuleElements.GetStructsDef() {
+		for _, m := range sd.Members {
+			if m.GoType == "string" {
+				unsafe = true
+			}
+		}
+	}
+	for _, ud := range t.ModuleElements.GetUnionsDef() {
+		for _, m := range ud.Members {
+			if m.GoType == "string" {
+				unsafe = true
+			}
+		}
+	}
+	for _, t := range t.ModuleElements.GetTypeDefs() {
+		if t.GoType == "string" {
+			unsafe = true
+		}
 	}
 
-	// Create the enums file. A single file holds all enums.
-	enumsFile, err := os.Create(outPathName + "/" + name + "_enums.go")
-	if err != nil {
+	if err := generate.HeaderFile(packageName, rtiInstallDir, rtiLibDir, cFileName, unsafe, goFile); err != nil {
 		log.Fatal(err)
 	}
-	defer enumsFile.Close()
-	if err := generate.EnumsFile(t.ModuleElements.GetEnumsDef(), packageName, rtiInstallDir, rtiLibDir, cFileName, enumsFile); err != nil {
+	if err := generate.ConstsFile(t.ModuleElements.GetConstsDef(), packageName, goFile); err != nil {
 		log.Fatal(err)
 	}
-
-	// Create the typedefs file. A single file holds all typedefs.
-	typeDefsFile, err := os.Create(outPathName + "/" + name + "_typedefs.go")
-	if err != nil {
+	if err := generate.EnumsFile(t.ModuleElements.GetEnumsDef(), packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 		log.Fatal(err)
 	}
-	defer typeDefsFile.Close()
-	if err := generate.TypeDefsFile(t.ModuleElements.GetTypeDefs(), packageName, rtiInstallDir, rtiLibDir, cFileName, typeDefsFile); err != nil {
+	if err := generate.TypeDefsFile(t.ModuleElements.GetTypeDefs(), packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 		log.Fatal(err)
 	}
 
 	// Iterate over all structs and create a type file, datawriter file, datareader file and all-in-one file for each.
 	for _, sd := range t.ModuleElements.GetStructsDef() {
-		fileName := outPathName + "/" + strings.ToLower(sd.GoName)
-
-		structFile, err := os.Create(fileName + ".go")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer structFile.Close()
-		if err = generate.StructFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, structFile); err != nil {
+		if err = generate.StructFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 			log.Fatal(err)
 		}
 
 		if !sd.Nested {
-			dwFile, err := os.Create(fileName + "_datawriter.go")
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer structFile.Close()
-			if err = generate.DataWriterFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, dwFile); err != nil {
+			if err = generate.DataWriterFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 				log.Fatal(err)
 			}
 
-			drFile, err := os.Create(fileName + "_datareader.go")
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer structFile.Close()
-			if err = generate.DataReaderFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, drFile); err != nil {
+			if err = generate.DataReaderFile(sd, packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 				log.Fatal(err)
 			}
 
-			allInOneFile, err := os.Create(fileName + "_allinone.go")
-			if err != nil {
-				log.Fatal(err)
-			}
-			defer structFile.Close()
-			if err = generate.AllInOneFile(sd, packageName, allInOneFile); err != nil {
+			if err = generate.AllInOneFile(sd, packageName, goFile); err != nil {
 				log.Fatal(err)
 			}
 		}
 	}
 
-	// Iterate over all structs and create a type file.
+	// Iterate over all unions and create a type file.
 	for _, ud := range t.ModuleElements.GetUnionsDef() {
-		fileName := outPathName + "/" + strings.ToLower(ud.GoName)
-
-		unionFile, err := os.Create(fileName + ".go")
-		if err != nil {
-			log.Fatal(err)
-		}
-		defer unionFile.Close()
-		if err = generate.UnionFile(ud, packageName, rtiInstallDir, rtiLibDir, cFileName, unionFile); err != nil {
+		if err = generate.UnionFile(ud, packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 			log.Fatal(err)
 		}
 	}

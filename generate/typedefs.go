@@ -35,19 +35,7 @@ func TypeDefsFile(td []parse.TypeDef, packageName, rtiInstallDir, rtiLibDir, cFi
 	}).Parse(typedefsFileTmpl)).Execute(w, typeDefs)
 }
 
-var typedefsFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-{{if .Unsafe}}import "unsafe"{{end}}
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-import "C"
-
+var typedefsFileTmpl = `
 {{range $typedef := .TypeDefs}}
 type {{.GoName}} {{Type .GoType .SeqLen .ArrayDims}}
 

@@ -24,23 +24,7 @@ func DataReaderFile(sd parse.StructDef, packageName, rtiInstallDir, rtiLibDir, c
 	})
 }
 
-var dataReaderTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-import (
-	"errors"
-	"rtiddsgo"
-)
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-// #include "{{.CFileName}}Plugin.h"
-import "C"
-
+var dataReaderTmpl = `
 type {{.GoName}}DataReader struct {
 	dr  *rtiddsgo.DataReader
 	cdr *C.{{.CName}}DataReader

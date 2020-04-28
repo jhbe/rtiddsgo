@@ -36,23 +36,7 @@ func StructFile(sd parse.StructDef, packageName, rtiInstallDir, rtiLibDir, cFile
 	}).Parse(structsFileTmpl)).Execute(w, ts)
 }
 
-var structsFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-import (
-{{if not .Nested}}	"errors"{{end}}
-{{if not .Nested}}	"rtiddsgo"{{end}}
-{{if .Unsafe}}    "unsafe"
-{{end}})
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-// #include "{{.CFileName}}Plugin.h"
-import "C"
+var structsFileTmpl = `
 
 //=====================================================================
 // Go type definition of the IDL type

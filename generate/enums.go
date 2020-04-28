@@ -49,16 +49,7 @@ type tmplEnumMember struct {
 	Value string // String representation of the integer value. Will not be empty.
 }
 
-var enumFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-import "C"
+var enumFileTmpl = `
 
 {{range $enum := .TE}}
 type {{$enum.GoName}} int

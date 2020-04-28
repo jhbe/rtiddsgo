@@ -36,23 +36,7 @@ func UnionFile(ud parse.UnionDef, packageName, rtiInstallDir, rtiLibDir, cFileNa
 	}).Parse(unionFileTmpl)).Execute(w, ts)
 }
 
-var unionFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-import (
-{{if not .Nested}}	"errors"{{end}}
-{{if not .Nested}}	"rtiddsgo"{{end}}
-{{if .Unsafe}}    "unsafe"
-{{end}})
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-import "C"
-
+var unionFileTmpl = `
 //=====================================================================
 // Go type definition of the IDL type
 //=====================================================================

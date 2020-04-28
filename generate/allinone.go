@@ -16,15 +16,7 @@ func AllInOneFile(sd parse.StructDef, packageName string, w io.Writer) error {
 	})
 }
 
-var allInOneTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-import (
-	"log"
-	"rtiddsgo"
-)
-
+var allInOneTmpl = `
 //==========================================================================
 // Writer
 //==========================================================================

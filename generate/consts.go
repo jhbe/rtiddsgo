@@ -27,9 +27,7 @@ type tmplConsts struct {
 	Consts      []parse.ConstDef
 }
 
-var constsFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
+var constsFileTmpl = `
 {{range $const := .Consts}}
 const {{$const.Name}} {{$const.Type}} = {{$const.Value}}{{end}}
 `

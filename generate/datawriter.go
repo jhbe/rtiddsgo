@@ -24,22 +24,7 @@ func DataWriterFile(sd parse.StructDef, packageName, rtiInstallDir, rtiLibDir, c
 	})
 }
 
-var dataWriterFileTmpl = `// THIS IS AN AUTOMATICALLY GENERATED FILE. DO NOT EDIT.
-
-package {{.PackageName}}
-
-import (
-	"fmt"
-	"rtiddsgo"
-)
-
-` + flags + `
-// #include <stdlib.h>
-// #include <ndds/ndds_c.h>
-// #include "{{.CFileName}}.h"
-// #include "{{.CFileName}}Support.h"
-// #include "{{.CFileName}}Plugin.h"
-import "C"
+var dataWriterFileTmpl = `
 
 type {{.GoName}}DataWriter struct {
 	dw  rtiddsgo.DataWriter
