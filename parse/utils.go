@@ -2,14 +2,22 @@ package parse
 
 import (
 	"strings"
-	)
+)
 
 // Returns the path concatenated with the name and an underscore in between or an empty string if the name is an empty
 // string. All instances of "::" are replaced with an underscore.
+// If name is a golang reserved ("type", "range") and there is no path, then a prefix "_" is added.
 func cNameOf(path, name string) string {
 	if len(name) == 0 {
 		return ""
 	}
+
+	// If the name is a reserved word, then an underscore is prepended when accessing the variable from Go. This only
+	// applies to names without a path.
+	if len(path) == 0  && (name == "type" || name == "range"){
+		return "_" + name
+	}
+
 	path = strings.Replace(strings.Trim(path, "_"), "::", "_", -1)
 	name = strings.Replace(strings.Trim(name, "_"), "::", "_", -1)
 	return strings.Trim(path + "_" + name, "_")
@@ -59,11 +67,14 @@ func isAQualifiedValue(s string) bool {
 }
 
 
-// Returns the golang type that corresponds to the given XML type. If "t" is "nonBasic", then the nonBasic type is used.
+// Returns the golang type that corresponds to the given XML type. If "xmlType" is "nonBasic", then the nonBasic type
+// is used.
 func goTypeOf(xmlType, nonBasic string) string {
 	return goPathTypeOf("", xmlType, nonBasic)
 }
 
+// Returns the golang type that corresponds to the given path and XML type. If "xmlType" is "nonBasic", then the
+// nonBasic type is used.
 func goPathTypeOf(goPath, xmlType, nonBasic string) string {
 	if xmlType == "nonBasic" {
 		xmlType = nonBasic
@@ -71,6 +82,12 @@ func goPathTypeOf(goPath, xmlType, nonBasic string) string {
 	switch (xmlType) {
 	case "boolean":
 		return "bool"
+	case "char8":
+		return "int8"
+	case "byte":
+		return "uint8"
+	case "octet":
+		return "uint8"
 	case "int16":
 		return "int16"
 	case "uint16":
@@ -102,6 +119,12 @@ func ddsTypeOf(xmlType, nonBasic string) string {
 	switch xmlType {
 	case "boolean":
 		return "DDS_Boolean"
+	case "byte":
+		return "DDS_Octet"
+	case "char8":
+		return "DDS_Char"
+	case "octet":
+		return "DDS_Octet"
 	case "int16":
 		return "DDS_Short"
 	case "uint16":
@@ -132,8 +155,33 @@ func xmlTypeOf(xmlType, nonBasic string) string {
 	return xmlType
 }
 
+// Returns the sequence length provided with any qualified names converted to cNamestyle ("::" -> "_"). Allow
+// for simple arithmetic.
 func cSeqLenOf(seqLen string) string {
-	if strings.Contains(seqLen, "::") {
+	if strings.Contains(seqLen, " ") {
+		panic ("Must not have spaces in the sequence length")
+	}
+
+	// A single character, including the "+-*/" is always left unchanged.
+	if len(seqLen) <= 1 {
+		return seqLen
+	}
+
+	// If the string contains arithmetic, then break up the string in substrings and
+	// process each recursively.
+	if strings.ContainsAny(seqLen, "+-*/") {
+		s := strings.ReplaceAll(seqLen, "+", " + ")
+		s = strings.ReplaceAll(s, "-", " - ")
+		s = strings.ReplaceAll(s, "*", " * ")
+		s = strings.ReplaceAll(s, "/", " / ")
+
+		f := strings.Fields(s)
+		result := ""
+		for _, field := range f {
+			result += cSeqLenOf (field)
+		}
+		return result
+	} else if strings.Contains(seqLen, "::") {
 		return "C." + cNameOf("", seqLen)
 	}
 	return seqLen

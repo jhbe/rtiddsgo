@@ -6,8 +6,8 @@ import (
 	"unsafe"
 )
 
-// #cgo CFLAGS: -DRTI_UNIX -m64 -I/home/johan/rti_connext_dds-5.3.1/include -I/home/johan/rti_connext_dds-5.3.1/include/ndds -I/usr/include/x86_64-linux-gnu
-// #cgo LDFLAGS: -L/home/johan/rti_connext_dds-5.3.1/lib/x64Linux3gcc5.4.0 -lnddscz -lnddscorez -ldl -lnsl -lm -lpthread -lrt -Wl,--no-as-needed
+// #cgo CFLAGS: -DRTI_UNIX -m64 -I/home/johan/rti_connext_dds-6.0.0/include -I/home/johan/rti_connext_dds-6.0.0/include/ndds -I/usr/include/x86_64-linux-gnu
+// #cgo LDFLAGS: -L/home/johan/rti_connext_dds-6.0.0/lib/x64Linux3gcc4.8.2 -lnddscz -lnddscorez -ldl -lnsl -lm -lpthread -lrt -Wl,--no-as-needed
 // #include <ndds/ndds_c.h>
 import "C"
 

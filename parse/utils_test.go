@@ -18,6 +18,8 @@ func TestCNameOf(t *testing.T) {
 		{"Ab_cD_Eef", "Gh", "Ab_cD_Eef_Gh"},
 		{"", "Ab::Cd", "Ab_Cd"},
 		{"Ab::cD::Eef", "gh", "Ab_cD_Eef_gh"},
+		{"", "type", "_type"},
+		{"Ab", "type", "Ab_type"},
 	}
 
 	for ix, c := range cases {
@@ -35,13 +37,14 @@ func TestGoNameOf(t *testing.T) {
 		{"", "", ""},
 		{"A", "", ""},
 		{"", "B", "B"},
+		{"", "b", "B"},
 		{"_", "B", "B"},
 		{"a", "B", "A_B"},
 		{"A", "B", "A_B"},
 		{"A_", "B", "A_B"},
 		{"_a_", "B", "A_B"},
 		{"A_B", "C", "A_B_C"},
-		{"Ab_cD_Eef", "Gh", "Ab_CD_Eef_Gh"},
+		{"Ab_cD_Eef", "gh", "Ab_CD_Eef_Gh"},
 		{"", "Ab::Cd", "Ab_Cd"},
 		{"Ab::cD::Eef", "gh", "Ab_CD_Eef_Gh"},
 	}
@@ -159,6 +162,25 @@ func TestXmlTypeOf(t *testing.T) {
 	}
 	for ix, c := range cases {
 		result := xmlTypeOf(c.t, c.nb)
+		if result != c.expected {
+			t.Errorf("case %d: Expected %s, got %s", ix, c.expected, result)
+		}
+	}
+}
+
+func TestCSeqLengOf(t *testing.T) {
+	cases := []struct {
+		in string
+		expected string
+	} {
+		{"", ""},
+		{"5", "5"},
+		{"com::this", "C.com_this"},
+		{"5*com::this", "5*C.com_this"},
+		{"com::this+1", "C.com_this+1"},
+	}
+	for ix, c := range cases {
+		result := cSeqLenOf(c.in)
 		if result != c.expected {
 			t.Errorf("case %d: Expected %s, got %s", ix, c.expected, result)
 		}

@@ -14,19 +14,12 @@ func StructFile(sd parse.StructDef, packageName, rtiInstallDir, rtiLibDir, cFile
 		RtiInstallDir string
 		RtiLibDir     string
 		CFileName     string
-		Unsafe        bool
 	}{
 		StructDef:     sd,
 		PackageName:   packageName,
 		RtiInstallDir: rtiInstallDir,
 		RtiLibDir:     rtiLibDir,
 		CFileName:     cFileName,
-	}
-
-	for _, m := range sd.Members {
-		if m.GoType == "string" {
-			ts.Unsafe = true
-		}
 	}
 
 	return template.Must(template.New("structsFileTmpl").Funcs(template.FuncMap{

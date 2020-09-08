@@ -15,7 +15,7 @@ func Retrieve(goName, goType, cType, to, from, seqLen, arrayDims string, isTypeD
 	}
 
 	if len(seqLen) > 0 {
-		return `	`+to+` = make([]`+goType+`, C.`+cType+`Seq_get_length(&`+from+`))
+		return to+` = make([]`+goType+`, C.`+cType+`Seq_get_length(&`+from+`))
 	for index, _ := range `+to+` {
 		value := C.`+cType+`Seq_get_reference(&`+from+`, C.DDS_Long(index))
 		`+Retrieve(goName, goType, cType, "("+to+")[index]", "*value", "", "", false)+`
@@ -25,7 +25,7 @@ func Retrieve(goName, goType, cType, to, from, seqLen, arrayDims string, isTypeD
 	switch goType {
 	case "bool":
 		return to + " = " + from + " == 1"
-	case "int16", "uint16", "int32", "uint32", "int64", "uint64", "float32", "float64":
+	case "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64", "float32", "float64":
 		return to + " = " + retType + "(" + from + ")"
 	case "string":
 		return to + " = " + retType + "(C.GoString((*C.char)(" + from + ")))"

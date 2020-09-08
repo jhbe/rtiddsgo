@@ -128,6 +128,7 @@ Types are mapped as follows:
 IDL            |   XML   |  C                | Go
 ---------------|---------|-------------------|--------------
 boolean        | boolean | DDS_Boolean       | bool
+octet          | byte    | DDS_Octet         | uint8
 short          | int16   | DDS_Short         | int16
 unsigned short | uint16  | DDS_UnsignedShort | uint16
 long           | int32   | DDS_Long          | int32

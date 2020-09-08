@@ -1,18 +1,18 @@
 package generate
 
 import (
-	"rtiddsgo/parse"
 	"io"
+	"rtiddsgo/parse"
 	"text/template"
 )
 
 func EnumsFile(e parse.EnumsDef, packageName, rtiInstallDir, rtiLibDir, cFileName string, w io.Writer) error {
 	allEnums := tmplEnums{
-		PackageName: packageName,
+		PackageName:   packageName,
 		RtiInstallDir: rtiInstallDir,
 		RtiLibDir:     rtiLibDir,
 		CFileName:     cFileName,
-		TE: make([]tmplEnum, len(e)),
+		TE:            make([]tmplEnum, len(e)),
 	}
 
 	for ix, ee := range e {
@@ -30,17 +30,17 @@ func EnumsFile(e parse.EnumsDef, packageName, rtiInstallDir, rtiLibDir, cFileNam
 }
 
 type tmplEnums struct {
-	PackageName string
-	RtiInstallDir      string
-	RtiLibDir          string
-	CFileName          string
-	TE          []tmplEnum
+	PackageName   string
+	RtiInstallDir string
+	RtiLibDir     string
+	CFileName     string
+	TE            []tmplEnum
 }
 
 // Definition of an enum suitable to a template.
 type tmplEnum struct {
-	GoName    string           // The fully qualified name of the enum. Will not be empty.
-	CName string
+	GoName  string // The fully qualified name of the enum. Will not be empty.
+	CName   string
 	Members []tmplEnumMember // An array of the enum members.
 }
 

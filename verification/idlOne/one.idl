@@ -1,6 +1,14 @@
 module com {
 module One {
 
+typedef boolean A;
+typedef sequence<A, 2> B;
+typedef B C;
+typedef sequence<C, 2> D;
+typedef D E;
+typedef E F;
+
+
 const long One_A = 3;
 const short One_B = 2;
 const string One_C = "Hello";
@@ -86,14 +94,20 @@ struct One_Z : One_X {
     One_P M;
     One_Q N;
 
-/*    One_R O;
-    One_S P;
-    One_T Q;
+    // Reserved words.
+    boolean type;
+    boolean range;
 
-    One_U R;
-    One_V S;
-    One_W T;*/
+    // Numeric expression in the statement.
+   	sequence<string , 2 * One_B> O;
+
+   	// Octet
+   	sequence<octet , One_A> P;
+	char Q;
 };
+
+typedef string<256> string_max;
+typedef sequence<string_max, 5> string_set;
 
 };
 };

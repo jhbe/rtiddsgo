@@ -35,7 +35,6 @@ func main() {
 	outPathName := os.Args[4]
 	packageName := os.Args[5]
 
-
 	// Read the XML files.
 	xmlFile, err := os.Open(xmlFileName)
 	if err != nil {
@@ -55,28 +54,7 @@ func main() {
 	}
 	defer goFile.Close()
 
-	unsafe := false
-	for _, sd := range t.ModuleElements.GetStructsDef() {
-		for _, m := range sd.Members {
-			if m.GoType == "string" {
-				unsafe = true
-			}
-		}
-	}
-	for _, ud := range t.ModuleElements.GetUnionsDef() {
-		for _, m := range ud.Members {
-			if m.GoType == "string" {
-				unsafe = true
-			}
-		}
-	}
-	for _, t := range t.ModuleElements.GetTypeDefs() {
-		if t.GoType == "string" {
-			unsafe = true
-		}
-	}
-
-	if err := generate.HeaderFile(packageName, rtiInstallDir, rtiLibDir, cFileName, unsafe, goFile); err != nil {
+	if err := generate.HeaderFile(t.ModuleElements, packageName, rtiInstallDir, rtiLibDir, cFileName, goFile); err != nil {
 		log.Fatal(err)
 	}
 	if err := generate.ConstsFile(t.ModuleElements.GetConstsDef(), packageName, goFile); err != nil {

@@ -7,8 +7,8 @@ type EnumsDef []EnumDef
 
 // EnumDef represents a single enum.
 type EnumDef struct {
-	GoName   string            // Fully qualified go name ("Module1_Module2_Name") of the enum.
-	CName   string            // Fully qualified  name ("module1_Module2_name") of the enum.
+	GoName string            // Fully qualified go name ("Module1_Module2_Name") of the enum.
+	CName  string            // Fully qualified  name ("module1_Module2_name") of the enum.
 	Enums  []string          // Fully qualified enum members ("Module1_Module_2_Enum1") in order. This array is the true order of the enum (the map below does not preserve order-of-addition).
 	Values map[string]string // Enum values given enums.
 }
@@ -25,7 +25,7 @@ func (me ModuleElements) GetEnumsDef() EnumsDef {
 		// Initiate a new EnumDef for this enum.
 		enumDef := EnumDef{
 			GoName: goNameOf(goPath, e.Name),
-			CName: cNameOf(cPath, e.Name),
+			CName:  cNameOf(cPath, e.Name),
 		}
 		enumDef.Values = make(map[string]string, len(e.Enumerators))
 

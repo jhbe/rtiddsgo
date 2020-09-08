@@ -7,7 +7,7 @@ import (
 // ConstDef represents a single constant.
 type ConstDef struct {
 	Name  string // Fully qualified go name ("Module1_Module2_Foo") of the constant.
-	Type  string // Fully qualified go name ("Module1_Module2_MyEnum") of the type of the constant. Can also be a basic type, such as "int16" or "string".
+	Type  string // Fully qualified go name ("Module1_Module2_MyConst") of the type of the constant. Can also be a basic type, such as "int16" or "string".
 	Value string // The value assigned to the constant ("Module1_Module2_MyEnumTwo" or "hello" or "34").
 }
 

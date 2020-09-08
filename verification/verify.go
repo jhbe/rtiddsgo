@@ -1,8 +1,6 @@
 package verification
 
-import (
-	"rtiddsgo/verification/src"
-)
+import eb "rtiddsgo/verification/src"
 
 const TopicName = "ComTwoA"
 

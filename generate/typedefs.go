@@ -12,7 +12,6 @@ func TypeDefsFile(td []parse.TypeDef, packageName, rtiInstallDir, rtiLibDir, cFi
 		RtiInstallDir string
 		RtiLibDir     string
 		CFileName     string
-		Unsafe        bool
 		TypeDefs      []parse.TypeDef
 	}{
 		PackageName:   packageName,
@@ -20,12 +19,6 @@ func TypeDefsFile(td []parse.TypeDef, packageName, rtiInstallDir, rtiLibDir, cFi
 		RtiLibDir:     rtiLibDir,
 		CFileName:     cFileName,
 		TypeDefs:      td,
-	}
-
-	for _, t := range td {
-		if t.GoType == "string" {
-			typeDefs.Unsafe = true
-		}
 	}
 
 	return template.Must(template.New("typedefsFileTmpl").Funcs(template.FuncMap{
@@ -40,11 +33,11 @@ var typedefsFileTmpl = `
 type {{.GoName}} {{Type .GoType .SeqLen .ArrayDims}}
 
 func (from {{.GoName}}) Store(to *C.{{.CName}}) {
-	{{Store .GoType .CType "from" "(*to)" "to" .SeqLen .ArrayDims}}
+    {{Store .GoType .CType "from" "(*to)" "to" .SeqLen .ArrayDims}}
 }
 
 func (to *{{.GoName}}) Retrieve(from C.{{.CName}}) {
-	{{Retrieve .GoName .GoType .CType "(*to)" "from" .SeqLen .ArrayDims true}}
+    {{Retrieve .GoName .GoType .CType "(*to)" "from" .SeqLen .ArrayDims true}}
 }
 
 {{end}}

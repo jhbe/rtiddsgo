@@ -20,7 +20,7 @@ func Store(goType, cType, from, to, toRef, seqLen, arrayDims string) string {
 	switch goType {
 	case "bool":
 		return "if " + from + " { " + to + " = 1 } else { " + to + " = 0 }"
-	case "int16", "uint16", "int32", "uint32", "int64", "uint64", "float32", "float64":
+	case "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64", "float32", "float64":
 		return to + " = C." + cType + "(" + from + ")"
 	case "string":
 		return `{

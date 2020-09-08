@@ -14,19 +14,12 @@ func UnionFile(ud parse.UnionDef, packageName, rtiInstallDir, rtiLibDir, cFileNa
 		RtiInstallDir string
 		RtiLibDir     string
 		CFileName     string
-		Unsafe        bool
 	}{
 		UnionDef:      ud,
 		PackageName:   packageName,
 		RtiInstallDir: rtiInstallDir,
 		RtiLibDir:     rtiLibDir,
 		CFileName:     cFileName,
-	}
-
-	for _, m := range ud.Members {
-		if m.GoType == "string" {
-			ts.Unsafe = true
-		}
 	}
 
 	return template.Must(template.New("unionFileTmpl").Funcs(template.FuncMap{

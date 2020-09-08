@@ -1,7 +1,7 @@
 #!/bin/make -f
 
-NDDSHOME=/home/johan/rti_connext_dds-5.3.1/
-RTILIBDIR=$(NDDSHOME)lib/x64Linux3gcc5.4.0
+NDDSHOME=/home/johan/rti_connext_dds-6.0.0
+RTILIBDIR=$(NDDSHOME)/lib/x64Linux3gcc4.8.2
 
 all: ./examplepub ./examplesub ./verificationpub ./verificationsub
 
@@ -59,18 +59,18 @@ verification/src/two.c: verification/src verification/idlTwo/two.idl
 	rm -rf verification/src/two.h verification/src/two.c verification/src/twoSupport.* verification/src/twoPlugin.*
 	$(NDDSHOME)/bin/rtiddsgen -d verification/src -I verification/idlOne -I verification/idlTwo -create typefiles  -language c verification/idlTwo/two.idl
 
-verification/src/one_constants.go: goddsgen verification/src/one.c verification/src/one.xml
+verification/src/one.go: goddsgen verification/src/one.c verification/src/one.xml
 	rm -rf verification/src/one*.go
 	./goddsgen verification/src/one.xml $(NDDSHOME) $(RTILIBDIR) verification/src eb
 
-verification/src/two_constants.go: goddsgen verification/src/two.c verification/src/two.xml
+verification/src/two.go: goddsgen verification/src/two.c verification/src/two.xml
 	rm -rf verification/src/two*.go
 	./goddsgen verification/src/two.xml $(NDDSHOME) $(RTILIBDIR) verification/src eb
 
-./verificationpub: verification/src/one_constants.go verification/src/one.c verification/src/two_constants.go verification/src/two.c verification/pub/verificationpub.go
+./verificationpub: verification/src/one.go verification/src/one.c verification/src/two.go verification/src/two.c verification/pub/verificationpub.go
 	go build verification/pub/verificationpub.go
 
-./verificationsub: verification/src/one_constants.go verification/src/one.c verification/src/two_constants.go verification/src/two.c verification/sub/verificationsub.go
+./verificationsub: verification/src/one.go verification/src/one.c verification/src/two.go verification/src/two.c verification/sub/verificationsub.go
 	go build verification/sub/verificationsub.go
 
 clean:
